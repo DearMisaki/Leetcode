@@ -20,7 +20,7 @@ def main():
     nodes.sort()
 
     for node in nodes:
-        targs = nodes[1]
+        targs = node[1]
         targ_bit = 0
 
         for targ in targs:
@@ -45,26 +45,30 @@ def main():
             capacity = q + 1
 
         ans.append([])
+        seen = 0
         for _ in range(capacity):
-            seen = 0
             max_index = -1
             max_gain = -1
+            best_targ_bit = 0
 
             for nodeid, targs, targ_bit in nodes:
                 if (1 << nodeid) & picked:
                     continue
 
-                count = bin(targ_bit ^ seen).count("1")
+                count = bin(targ_bit & ~seen).count("1")
 
                 if count > max_gain:
                     max_gain = count
                     max_index = nodeid
-                    seen |= targ_bit
+                    best_targ_bit = targ_bit
 
+            seen |= best_targ_bit
+            picked |= 1 << max_index
             ans[-1].append(max_index)
 
     for a in ans:
-        print(" ".join(str(nodes[i]) for i in a))
+        a.sort()
+        print(" ".join(map(str, a)))
 
 
 main()
